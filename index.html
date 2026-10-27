@@ -49,6 +49,16 @@ body {
   display: block;
   touch-action: none;
 }
+/* everything lives in one frame that turns back upright when the browser rotates, so the flyer stays put */
+#frame {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  transform-origin: 0 0;
+}
 #fondo, #letras {
   position: fixed;
   inset: 0;
@@ -174,6 +184,7 @@ body {
 }
 </style>
 
+<div id="frame">
 <canvas id="fondo" aria-hidden="true"></canvas>
 <canvas id="letras" aria-hidden="true"></canvas>
 <canvas id="glass" role="img" aria-label="31 de octubre, festejo mi cumple. Traé bebida. 14 de julio 972. Una birra que se mueve con el celular tapa la invitación hasta que te la tomás."></canvas>
@@ -206,6 +217,7 @@ body {
   <p class="title">¡¡salute!!</p>
   <button id="again" class="glow-btn" type="button">servir otra</button>
 </section>
+</div>
 
 <script>
 (() => {
@@ -219,7 +231,7 @@ body {
     salud: $('salud'), again: $('again'),
     pour: $('pour'), sound: $('sound'), soundOn: $('soundOn'), soundOff: $('soundOff'),
   };
-  const fondoCv = $('fondo'), letrasCv = $('letras');
+  const frameEl = $('frame'), fondoCv = $('fondo'), letrasCv = $('letras');
   const fctx = fondoCv.getContext('2d', { alpha: false }), lctx = letrasCv.getContext('2d', { alpha: false });
 
   // the poster and the beer photo are both drawn on a 1080 x 2340 canvas
@@ -265,7 +277,7 @@ body {
   let fill = 0.62, foam = 0, foamRest = 1, foamMax = 1;
   let pouring = false, stream = 0, fizz = 0;
   let started = false, emptyShown = false, seeded = false;
-  let drinkRate = 0, gulpTimer = 0, drunkMl = 0;
+  let drinkRate = 0, drunkMl = 0;
   let time = 0;
 
   // ---- gravity: target from the phone or the finger; the beer chases it on a spring ----
@@ -273,7 +285,7 @@ body {
   let gx = 0, gy = 1, gz = 0;
   let nX = 0, nY = 1, m = 1;
   let level = 0, sLine = 0, yS = 0, foamT = 0;
-  let prevAng = 0;
+  let prevAng = 0, sloshAmt = 0;
 
   let mode = 'idle', sensorSeen = false, motionSeen = false;
   const tilt = { roll: 0, pitch: 0 };
@@ -361,21 +373,35 @@ body {
     x.setTransform(DPR, 0, 0, DPR, 0, 0);
     return [c, x];
   }
+  const probe = document.createElement('div');
+  probe.style.cssText = 'position:fixed;top:0;left:0;width:0;height:0;visibility:hidden;pointer-events:none;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)';
+  document.body.appendChild(probe);
+  function insets() {
+    const cs = getComputedStyle(probe);
+    return { top: parseFloat(cs.paddingTop) || 0, bottom: parseFloat(cs.paddingBottom) || 0 };
+  }
+  // the two blocks of lettering on the poster's canvas: padded rows to copy, and where the letters themselves start and end
+  const TEXT_BLOCKS = [
+    { y0: 190, y1: 500, glyphTop: 231, glyphBottom: 458 },
+    { y0: 1915, y1: 2230, glyphTop: 1954, glyphBottom: 2188 },
+  ];
   // the poster and its lettering each get their own canvas, so the hue can drift on the poster alone
   function paintPoster() {
-    for (const [canvas, x, im, soft] of [[fondoCv, fctx, img.fondo, true], [letrasCv, lctx, img.texto, false]]) {
+    for (const [canvas, x] of [[fondoCv, fctx], [letrasCv, lctx]]) {
       canvas.width = cv.width; canvas.height = cv.height;
       x.setTransform(DPR, 0, 0, DPR, 0, 0);
       x.fillStyle = '#000';
       x.fillRect(0, 0, W, H);
-      if (soft && (offX > 0.5 || offY > 0.5)) {
-        // fill the margins with a soft, stretched copy of the poster
-        const cs = Math.max(W / DW, H / DH);
-        try { x.filter = 'blur(18px)'; } catch (e) { /* plain stretch */ }
-        x.drawImage(im, (W - DW * cs) / 2, (H - DH * cs) / 2, DW * cs, DH * cs);
-        try { x.filter = 'none'; } catch (e) { /* ignore */ }
-      }
-      x.drawImage(im, offX, offY, DW * s, DH * s);
+    }
+    fctx.drawImage(img.fondo, offX, offY, DW * s, DH * s);
+    // each block sits where the design puts it, nudged inward only when the screen would crop it
+    const ins = insets(), st = Math.min(s, (W - 24) / (TEXT_RIGHT - TEXT_LEFT)), left = W / 2 - (DW / 2) * st;
+    for (const b of TEXT_BLOCKS) {
+      let top = offY + b.glyphTop * s;
+      top = Math.min(top, H - ins.bottom - 16 - (b.glyphBottom - b.glyphTop) * st);
+      top = Math.max(top, ins.top + 26);
+      const y = top - (b.glyphTop - b.y0) * st;
+      lctx.drawImage(img.texto, 0, b.y0, DW, b.y1 - b.y0, left, y, DW * st, (b.y1 - b.y0) * st);
     }
   }
   // the beer photo shares the poster's canvas, so it lines up with it on any phone
@@ -464,14 +490,22 @@ body {
   }
 
   function resize() {
-    W = Math.max(1, window.innerWidth);
-    H = Math.max(1, window.innerHeight);
+    const vw = Math.max(1, window.innerWidth), vh = Math.max(1, window.innerHeight), a = turnDeg();
+    const sideways = (a === 90 || a === 270) && vw > vh;
+    W = sideways ? vh : vw;
+    H = sideways ? vw : vh;
+    frameEl.style.width = `${W}px`;
+    frameEl.style.height = `${H}px`;
+    frameEl.style.transform = !sideways && a !== 180 ? ''
+      : a === 90 ? `translate(0, ${vh}px) rotate(-90deg)`
+      : a === 270 ? `translate(${vw}px, 0) rotate(90deg)`
+      : `translate(${vw}px, ${vh}px) rotate(180deg)`;
     DPR = Math.min(dprCap, window.devicePixelRatio || 1);
     cv.width = Math.round(W * DPR);
     cv.height = Math.round(H * DPR);
     DZ = Math.min(W, H) * 0.2;
     R = Math.hypot(W, H) / 2 + 2;
-    s = Math.min(H / DH, (W / 2 - 8) / (DW / 2 - TEXT_LEFT), (W / 2 - 8) / (TEXT_RIGHT - DW / 2));
+    s = Math.max(W / DW, H / DH); // the poster always fills the screen, cropping a little top and bottom if needed
     offX = (W - DW * s) / 2;
     offY = (H - DH * s) / 2;
     full = 1 - START_LINE;
@@ -490,14 +524,20 @@ body {
   }
 
   // ---- sensors ----
-  function screenTurn() {
+  function turnDeg() {
     const o = screen.orientation;
     const a = o && typeof o.angle === 'number' ? o.angle : (typeof window.orientation === 'number' ? window.orientation : 0);
-    return (a * Math.PI) / 180;
+    return (((Math.round(a / 90) * 90) % 360) + 360) % 360;
   }
-  function toScreen(x, y) {
-    const t = screenTurn(), c = Math.cos(t), si = Math.sin(t);
-    return [x * c + y * si, -x * si + y * c];
+  // the frame is always turned back to the phone's own portrait, so sensor readings need no rotation
+  const toScreen = (x, y) => [x, y];
+  // finger positions arrive in the browser's coordinates; bring them into the frame's
+  function toFrame(e) {
+    const a = turnDeg(), vw = window.innerWidth, vh = window.innerHeight;
+    if (a === 90) return [vh - e.clientY, e.clientX];
+    if (a === 270) return [e.clientY, vw - e.clientX];
+    if (a === 180) return [vw - e.clientX, vh - e.clientY];
+    return [e.clientX, e.clientY];
   }
   function onOrientation(e) {
     if (e.beta == null || e.gamma == null) return;
@@ -557,21 +597,22 @@ body {
   }
   cv.addEventListener('pointerdown', (e) => {
     if (!started) return;
-    if (mode === 'sensor') { splash(e.clientX, e.clientY); return; }
+    const [px, py] = toFrame(e);
+    if (mode === 'sensor') { splash(px, py); return; }
     try { cv.setPointerCapture(e.pointerId); } catch (err) { /* ignore */ }
-    drag = { id: e.pointerId, x: e.clientX, y: e.clientY, r0: tilt.roll, p0: tilt.pitch, moved: false };
+    drag = { id: e.pointerId, x: px, y: py, r0: tilt.roll, p0: tilt.pitch, moved: false };
     cv.classList.add('dragging');
   });
   cv.addEventListener('pointermove', (e) => {
     if (!drag || e.pointerId !== drag.id) return;
-    const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+    const [px, py] = toFrame(e), dx = px - drag.x, dy = py - drag.y;
     if (Math.hypot(dx, dy) > 6) drag.moved = true;
     tilt.roll = clamp(drag.r0 + (dx / W) * 2.2, -1.75, 1.75);
     tilt.pitch = clamp(drag.p0 - (dy / H) * 3.4, 0, 2.6);
   });
   function endDrag(e) {
     if (!drag || e.pointerId !== drag.id) return;
-    if (!drag.moved) splash(e.clientX, e.clientY);
+    if (!drag.moved) { const [px, py] = toFrame(e); splash(px, py); }
     drag = null;
     cv.classList.remove('dragging');
   }
@@ -623,28 +664,26 @@ body {
     audioClock = 0.1;
     const t = ac.currentTime;
     pourGain.gain.setTargetAtTime(stream * (0.2 + Math.random() * 0.12), t, 0.06);
-    fizzGain.gain.setTargetAtTime(fill > 0 ? 0.006 + fizz * 0.05 : 0, t, 0.3);
+    fizzGain.gain.setTargetAtTime(fill > 0 ? 0.006 + fizz * 0.05 + drinkRate * 0.12 : 0, t, 0.3);
+    // sparkling bubbles: a few pops at rest, a rush while drinking, pouring or sloshing
+    if (!soundOn || fill <= 0) return;
+    let n = Math.min(12, (5 + drinkRate * 260 + stream * 70 + sloshAmt * 40 + fizz * 25) * 0.1);
+    while (n > 0) {
+      if (Math.random() < n) bubblePop(t + Math.random() * 0.1, 1700 + Math.random() * 3800, 0.012 + Math.random() * 0.03);
+      n -= 1;
+    }
   }
-  function gulp(strength) {
-    if (!ac || !soundOn) return;
-    const t = ac.currentTime;
-    const o = ac.createOscillator(), g = ac.createGain();
+  // one bubble bursting at the surface: a tiny chirp that rises in pitch and dies in a few hundredths of a second
+  function bubblePop(when, freq, gain) {
+    const o = ac.createOscillator(), g = ac.createGain(), dur = 0.02 + Math.random() * 0.03;
     o.type = 'sine';
-    o.frequency.setValueAtTime(210, t);
-    o.frequency.exponentialRampToValueAtTime(70, t + 0.16);
-    g.gain.setValueAtTime(0.0001, t);
-    g.gain.exponentialRampToValueAtTime(0.5 * strength, t + 0.02);
-    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.2);
+    o.frequency.setValueAtTime(freq, when);
+    o.frequency.exponentialRampToValueAtTime(freq * (1.4 + Math.random() * 0.5), when + dur);
+    g.gain.setValueAtTime(0.0001, when);
+    g.gain.exponentialRampToValueAtTime(gain, when + 0.002);
+    g.gain.exponentialRampToValueAtTime(0.0001, when + dur);
     o.connect(g); g.connect(master);
-    o.start(t); o.stop(t + 0.22);
-    const n = ac.createBufferSource(), f = ac.createBiquadFilter(), ng = ac.createGain();
-    n.buffer = noiseBuf;
-    f.type = 'lowpass'; f.frequency.value = 900;
-    ng.gain.setValueAtTime(0.0001, t);
-    ng.gain.exponentialRampToValueAtTime(0.25 * strength, t + 0.01);
-    ng.gain.exponentialRampToValueAtTime(0.0001, t + 0.09);
-    n.connect(f); f.connect(ng); ng.connect(master);
-    n.start(t, Math.random()); n.stop(t + 0.1);
+    o.start(when); o.stop(when + dur + 0.01);
   }
   function burp() {
     if (!ac || !soundOn) return;
@@ -699,6 +738,22 @@ body {
   el.pour.addEventListener('click', pour);
   el.again.addEventListener('click', pour);
 
+  // Android can truly lock the screen in portrait, but only in full screen; iPhone can't, so the frame turns back instead
+  function lockPortrait() {
+    if (!(window.matchMedia && matchMedia('(pointer: coarse)').matches)) return;
+    const root = document.documentElement;
+    const lock = () => {
+      try {
+        const p = screen.orientation && screen.orientation.lock && screen.orientation.lock('portrait');
+        if (p && p.catch) p.catch(() => {});
+      } catch (e) { /* not supported */ }
+    };
+    try {
+      if (root.requestFullscreen && !document.fullscreenElement) root.requestFullscreen({ navigationUI: 'hide' }).then(lock, () => {});
+      else lock();
+    } catch (e) { /* not available */ }
+  }
+
   el.go.addEventListener('click', () => {
     const asks = [];
     try {
@@ -707,6 +762,7 @@ body {
     try {
       if (window.DeviceMotionEvent && typeof DeviceMotionEvent.requestPermission === 'function') asks.push(DeviceMotionEvent.requestPermission());
     } catch (e) { asks.push(Promise.reject(e)); }
+    lockPortrait();
     startAudio();
     keepAwake();
     started = true;
@@ -864,11 +920,6 @@ body {
     }
     // a thin collar of foam stays on whatever beer is left
     if (fill > 0.002) foam = Math.max(foam, foamRest * 0.22 * Math.min(1, fill / 0.12));
-    gulpTimer -= dt;
-    if (drinkRate > 0.02 && gulpTimer <= 0) {
-      gulp(Math.min(1, 0.45 + drinkRate * 2.5));
-      gulpTimer = Math.max(0.26, 0.5 - drinkRate);
-    }
     if (started && !pouring && !emptyShown && fill <= 0.0015) finishPint();
 
     // waves: turning the glass, pouring, and a little life at rest
@@ -878,6 +929,7 @@ body {
     if (da < -Math.PI) da += TAU;
     prevAng = ang;
     const om = clamp(da / Math.max(dt, 1e-3), -8, 8) * (reduceMotion ? 0.3 : 1);
+    sloshAmt += (Math.min(1, Math.abs(om) / 3) - sloshAmt) * Math.min(1, dt * 4);
     if (Math.abs(om) > 0.05) for (let i = 0; i < WN; i++) wv[i] += om * (nodeX(i) / R) * 150 * dt;
     if (!reduceMotion && Math.random() < dt * 1.2) kick((Math.random() * 2 - 1) * R * 0.8, (Math.random() - 0.5) * 26, 30);
     if (stream > 0.1) kick((Math.random() - 0.5) * 12, -(40 + Math.random() * 60) * stream, 18);
@@ -1033,6 +1085,7 @@ body {
 
   window.addEventListener('resize', resize);
   window.addEventListener('orientationchange', () => setTimeout(resize, 120));
+  if (screen.orientation && screen.orientation.addEventListener) screen.orientation.addEventListener('change', () => setTimeout(resize, 60));
 
   resize();
   paintSoundButton();
