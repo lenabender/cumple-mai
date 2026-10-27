@@ -1,0 +1,1046 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}*,*::before,*::after{box-sizing:border-box}body{margin:0}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>Festejo Mi Cumple</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Invitación al cumple: una birra que se mueve con el celu tapa el póster del caballo hasta que te la tomás.">
+<meta name="theme-color" content="#141a3c">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Arimo:wght@700&display=swap">
+<style>
+/* Layout: the designer's poster fills the screen and its hue drifts slowly round the wheel; the lettering is screened over it; a live pint covers everything and drinking it reveals the invitation. Controls sit in the top corners. */
+:root {
+  --night: #141a3c;
+  --ink: #fffdf2;
+  --glow: #ffe36a;
+  --glow-soft: rgba(90, 170, 255, 0.65);
+  --chip: rgba(16, 24, 64, 0.55);
+  --edge: rgba(230, 240, 255, 0.75);
+  --amber: #ffe36a;
+  --sans: "Arimo", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color-scheme: dark;
+}
+html, body { height: 100%; }
+body {
+  background: var(--night);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: 16px;
+  overflow: hidden;
+  overscroll-behavior: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+#glass {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  touch-action: none;
+}
+#fondo, #letras {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  pointer-events: none;
+}
+/* the poster's hue drifts all the way round, slowly and forever */
+#fondo { animation: hue 48s linear infinite; will-change: filter; }
+#letras { mix-blend-mode: screen; }
+@keyframes hue {
+  from { filter: hue-rotate(0deg); }
+  to { filter: hue-rotate(360deg); }
+}
+#glass.draggable { cursor: grab; }
+#glass.dragging { cursor: grabbing; }
+
+.corner {
+  position: fixed;
+  z-index: 2;
+  top: calc(env(safe-area-inset-top, 0px) + 12px);
+}
+.corner.left { left: max(16px, env(safe-area-inset-left, 0px)); }
+.corner.right { right: max(16px, env(safe-area-inset-right, 0px)); }
+.btn {
+  appearance: none;
+  border: 0;
+  font: inherit;
+  cursor: pointer;
+  color: var(--ink);
+  background: var(--chip);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 14px var(--glow-soft);
+}
+.btn:disabled { opacity: 0.4; cursor: default; box-shadow: none; }
+.btn svg { width: 22px; height: 22px; filter: drop-shadow(0 0 3px var(--glow)); }
+:focus-visible { outline: 3px solid var(--amber); outline-offset: 3px; }
+
+.hint {
+  position: fixed;
+  z-index: 2;
+  left: 50%;
+  top: 52%;
+  transform: translate(-50%, -50%);
+  margin: 0;
+  width: max-content;
+  max-width: calc(100% - 32px);
+  padding: 10px 18px;
+  border-radius: 999px;
+  background: var(--chip);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  font-size: 17px;
+  line-height: 1.25;
+  text-align: center;
+  text-wrap: balance;
+  text-shadow: 0 0 4px var(--glow), 0 0 12px var(--glow);
+  transition: opacity 0.6s ease;
+  pointer-events: none;
+}
+.hint.faded { opacity: 0; }
+
+.stage {
+  position: fixed;
+  z-index: 3;
+  left: 0;
+  right: 0;
+  top: 52%;
+  transform: translateY(-50%);
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  text-align: center;
+  pointer-events: none;
+}
+.stage > * { pointer-events: auto; }
+.glow-btn {
+  appearance: none;
+  cursor: pointer;
+  font: inherit;
+  font-size: 23px;
+  line-height: 1.1;
+  color: var(--ink);
+  padding: 13px 28px 14px;
+  border: 2px solid var(--edge);
+  border-radius: 999px;
+  background: var(--chip);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  text-shadow: 0 0 4px var(--glow), 0 0 12px var(--glow), 0 0 22px var(--glow);
+  box-shadow: 0 0 22px var(--glow-soft), inset 0 0 14px rgba(90, 170, 255, 0.3);
+}
+.glow-btn:active { transform: scale(0.97); }
+.title {
+  margin: 0;
+  max-width: 12ch;
+  font-size: clamp(30px, 9vw, 46px);
+  line-height: 1.05;
+  text-wrap: balance;
+  text-shadow: 0 0 6px var(--glow), 0 0 16px var(--glow), 0 0 30px var(--glow);
+}
+.sub {
+  margin: 0;
+  max-width: 28ch;
+  font-size: 16px;
+  line-height: 1.3;
+  text-wrap: balance;
+  text-shadow: 0 0 4px var(--glow), 0 0 12px var(--glow), 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+@media (prefers-reduced-motion: reduce) {
+  .hint { transition: none; }
+  #fondo { animation: none; }
+}
+</style>
+
+<canvas id="fondo" aria-hidden="true"></canvas>
+<canvas id="letras" aria-hidden="true"></canvas>
+<canvas id="glass" role="img" aria-label="31 de octubre, festejo mi cumple. Traé bebida. 14 de julio 972. Una birra que se mueve con el celular tapa la invitación hasta que te la tomás."></canvas>
+
+<div class="corner left">
+  <button id="sound" class="btn" type="button" aria-pressed="true" aria-label="Silenciar">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M4 9.5v5h3.5L12 18.5v-13L7.5 9.5z"></path>
+      <g id="soundOn"><path d="M15.5 9a4 4 0 0 1 0 6"></path><path d="M18 6.5a7.5 7.5 0 0 1 0 11"></path></g>
+      <g id="soundOff" hidden><path d="M16 9.5l5 5M21 9.5l-5 5"></path></g>
+    </svg>
+  </button>
+</div>
+<div class="corner right">
+  <button id="pour" class="btn" type="button" aria-label="Servir">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M6 4h12l-1.6 16H7.6z"></path><path d="M6.6 9.5h10.8"></path>
+    </svg>
+  </button>
+</div>
+
+<p id="hint" class="hint faded" aria-live="polite">Inclinalo hacia tu boca para tomar</p>
+
+<section id="start" class="stage" aria-label="Empezar">
+  <p class="title">tomate una birra</p>
+  <button id="go" class="glow-btn" type="button">OK</button>
+</section>
+
+<section id="salud" class="stage" aria-label="Vaso vacío" hidden>
+  <p class="title">¡¡salute!!</p>
+  <button id="again" class="glow-btn" type="button">servir otra</button>
+</section>
+
+<script>
+(() => {
+  'use strict';
+
+  const cv = document.getElementById('glass');
+  const ctx = cv.getContext('2d');
+  const $ = (id) => document.getElementById(id);
+  const el = {
+    hint: $('hint'), start: $('start'), go: $('go'),
+    salud: $('salud'), again: $('again'),
+    pour: $('pour'), sound: $('sound'), soundOn: $('soundOn'), soundOff: $('soundOff'),
+  };
+  const fondoCv = $('fondo'), letrasCv = $('letras');
+  const fctx = fondoCv.getContext('2d', { alpha: false }), lctx = letrasCv.getContext('2d', { alpha: false });
+
+  // the poster and the beer photo are both drawn on a 1080 x 2340 canvas
+  const DW = 1080, DH = 2340;
+  const TEXT_LEFT = 88, TEXT_RIGHT = 994; // the lettering must never be cropped
+  const BEER_LINE = 737, BEER_FOAM_TOP = 528; // the photo's head, top to beer line
+  const START_LINE = 0.15;           // a fresh glass fills up to 15% from the top of the screen
+  const DRINK_OPACITY = 0.95;
+  const PINT_ML = 500;
+  const POUR_SECONDS = 2.6;
+  const reduceMotion = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
+  const TAU = Math.PI * 2;
+
+  function load(key) { try { return localStorage.getItem(key); } catch (e) { return null; } }
+  function save(key, val) { try { localStorage.setItem(key, val); } catch (e) { /* private mode */ } }
+  function rng(seed) {
+    return () => {
+      seed = (seed + 0x6d2b79f5) | 0;
+      let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
+  const img = { fondo: new Image(), birra: new Image(), texto: new Image() };
+  const files = { fondo: 'fondo.jpg', birra: 'birra.jpg', texto: 'texto.jpg' };
+  let loaded = 0;
+  for (const [name, im] of Object.entries(img)) {
+    im.decoding = 'async';
+    im.onload = () => { loaded += 1; if (loaded === 3) resize(); };
+    im.src = files[name];
+  }
+  const ready = () => loaded === 3;
+
+  // ---- glass geometry: the screen is the front of a box W x H x DZ ----
+  let W = 1, H = 1, DPR = 1, DZ = 1, R = 1, dprCap = 2;
+  let s = 1, offX = 0, offY = 0;
+  let drinkSheet = null, foamSprite = null, foamGeo = null, drinkCv = null, dctx = null;
+  let full = 0.62;
+
+  // ---- beer state ----
+  let fill = 0.62, foam = 0, foamRest = 1, foamMax = 1;
+  let pouring = false, stream = 0, fizz = 0;
+  let started = false, emptyShown = false, seeded = false;
+  let drinkRate = 0, gulpTimer = 0, drunkMl = 0;
+  let time = 0;
+
+  // ---- gravity: target from the phone or the finger; the beer chases it on a spring ----
+  const gT = { x: 0, y: 1, z: 0 }, gE = { x: 0, y: 1, z: 0 }, gV = { x: 0, y: 0, z: 0 };
+  let gx = 0, gy = 1, gz = 0;
+  let nX = 0, nY = 1, m = 1;
+  let level = 0, sLine = 0, yS = 0, foamT = 0;
+  let prevAng = 0;
+
+  let mode = 'idle', sensorSeen = false, motionSeen = false;
+  const tilt = { roll: 0, pitch: 0 };
+  let drag = null;
+  const keys = new Set();
+  const acc = { x: 0, y: 0 };
+  let shakes = [];
+
+  // ---- surface waves along the beer line ----
+  const WN = 72;
+  const wh = new Float32Array(WN), wv = new Float32Array(WN);
+  const sx = new Float32Array(WN), sy = new Float32Array(WN);
+  const nodeX = (i) => -R + (2 * R * i) / (WN - 1);
+  function waveAt(lx) {
+    const f = clamp(((lx + R) / (2 * R)) * (WN - 1), 0, WN - 1.001);
+    const i = f | 0, t = f - i;
+    return wh[i] * (1 - t) + wh[i + 1] * t;
+  }
+  function kick(lx, amount, width) {
+    for (let i = 0; i < WN; i++) {
+      const d = (nodeX(i) - lx) / width;
+      wv[i] += amount * Math.exp(-d * d);
+    }
+  }
+  function stepWaves(dt) {
+    const n = 3, h = dt / n, dx = (2 * R) / (WN - 1), c2 = (260 * 260) / (dx * dx);
+    for (let k = 0; k < n; k++) {
+      for (let i = 0; i < WN; i++) {
+        const l = wh[i > 0 ? i - 1 : 1], r = wh[i < WN - 1 ? i + 1 : WN - 2];
+        wv[i] += (c2 * (l + r - 2 * wh[i]) - 38 * wh[i] - 1.7 * wv[i]) * h;
+      }
+      let mean = 0;
+      for (let i = 0; i < WN; i++) { wh[i] = clamp(wh[i] + wv[i] * h, -36, 36); mean += wh[i]; }
+      mean /= WN;
+      for (let i = 0; i < WN; i++) wh[i] -= mean;
+    }
+  }
+
+  // ---- volume: how high the beer stands for a given tilt ----
+  const CX = [0, 1, 1, 0], CY = [0, 0, 1, 1];
+  const PX = new Float64Array(8), PY = new Float64Array(8);
+  function sliceArea(ax, ay, t) {
+    let n = 0;
+    for (let i = 0; i < 4; i++) {
+      const j = (i + 1) & 3;
+      const xi = CX[i] * W, yi = CY[i] * H, xj = CX[j] * W, yj = CY[j] * H;
+      const fi = ax * xi + ay * yi - t, fj = ax * xj + ay * yj - t;
+      if (fi >= 0) { PX[n] = xi; PY[n] = yi; n++; }
+      if ((fi >= 0) !== (fj >= 0)) {
+        const k = fi / (fi - fj);
+        PX[n] = xi + (xj - xi) * k; PY[n] = yi + (yj - yi) * k; n++;
+      }
+    }
+    if (n < 3) return 0;
+    let a = 0;
+    for (let i = 0; i < n; i++) { const j = (i + 1) % n; a += PX[i] * PY[j] - PX[j] * PY[i]; }
+    return Math.abs(a) * 0.5;
+  }
+  const SLICES = 24;
+  function volumeAbove(lv) {
+    const dz = DZ / SLICES;
+    let v = 0;
+    for (let k = 0; k < SLICES; k++) v += sliceArea(gx, gy, lv - gz * (k + 0.5) * dz);
+    return v * dz;
+  }
+  function solveLevel(frac) {
+    const a = gx * W, b = gy * H, c = gz * DZ;
+    let lo = Math.min(0, a) + Math.min(0, b) + Math.min(0, c);
+    let hi = Math.max(0, a) + Math.max(0, b) + Math.max(0, c);
+    if (frac <= 0) return hi + 1;
+    const target = frac * W * H * DZ;
+    for (let it = 0; it < 26; it++) {
+      const mid = (lo + hi) * 0.5;
+      if (volumeAbove(mid) > target) lo = mid; else hi = mid;
+    }
+    return (lo + hi) * 0.5;
+  }
+  const inBeer = (x, y, margin) => nX * x + nY * y >= sLine + margin;
+
+  // ---- the designer's layers, fitted to this screen ----
+  function makeLayer() {
+    const c = document.createElement('canvas');
+    c.width = cv.width; c.height = cv.height;
+    const x = c.getContext('2d');
+    x.setTransform(DPR, 0, 0, DPR, 0, 0);
+    return [c, x];
+  }
+  // the poster and its lettering each get their own canvas, so the hue can drift on the poster alone
+  function paintPoster() {
+    for (const [canvas, x, im, soft] of [[fondoCv, fctx, img.fondo, true], [letrasCv, lctx, img.texto, false]]) {
+      canvas.width = cv.width; canvas.height = cv.height;
+      x.setTransform(DPR, 0, 0, DPR, 0, 0);
+      x.fillStyle = '#000';
+      x.fillRect(0, 0, W, H);
+      if (soft && (offX > 0.5 || offY > 0.5)) {
+        // fill the margins with a soft, stretched copy of the poster
+        const cs = Math.max(W / DW, H / DH);
+        try { x.filter = 'blur(18px)'; } catch (e) { /* plain stretch */ }
+        x.drawImage(im, (W - DW * cs) / 2, (H - DH * cs) / 2, DW * cs, DH * cs);
+        try { x.filter = 'none'; } catch (e) { /* ignore */ }
+      }
+      x.drawImage(im, offX, offY, DW * s, DH * s);
+    }
+  }
+  // the beer photo shares the poster's canvas, so it lines up with it on any phone
+  function paintBeer(im) {
+    const [c, x] = makeLayer();
+    if (offX > 0.5 || offY > 0.5) {
+      const cs = Math.max(W / DW, H / DH);
+      x.drawImage(im, (W - DW * cs) / 2, (H - DH * cs) / 2, DW * cs, DH * cs);
+    }
+    x.drawImage(im, offX, offY, DW * s, DH * s);
+    return c;
+  }
+  // the head: a wavy band painted once, with the photo's own colours from its top (t = 0) to the beer line (t = 1)
+  const FOAM_STOPS = [
+    [-0.12, 'rgba(248,241,216,0)'], [-0.02, 'rgba(248,241,216,0.6)'], [0.06, 'rgba(246,239,214,0.95)'],
+    [0.17, 'rgb(249,241,216)'], [0.29, 'rgb(247,238,208)'], [0.46, 'rgb(244,233,196)'],
+    [0.57, 'rgb(241,224,175)'], [0.69, 'rgb(233,206,123)'], [0.8, 'rgb(221,180,64)'],
+    [0.86, 'rgb(214,161,41)'], [0.93, 'rgb(203,119,32)'], [0.97, 'rgb(209,141,31)'], [1.02, 'rgb(221,167,28)'],
+  ];
+  const FOAM_BUBBLES = [
+    { t0: 0.08, t1: 0.6, density: 0.03, r0: 0.5, r1: 1.5, fill: 'rgba(255,255,250,0.4)', rim: 'rgba(196,174,128,0.16)' },
+    { t0: 0.5, t1: 0.88, density: 0.012, r0: 1, r1: 3.4, fill: 'rgba(255,226,140,0.35)', rim: 'rgba(186,116,36,0.42)' },
+    { t0: 0.86, t1: 0.99, density: 0.03, r0: 0.9, r1: 2.4, fill: 'rgba(244,150,40,0.4)', rim: 'rgba(150,58,12,0.5)' },
+  ];
+  function paintFoamSprite() {
+    const F = foamRest, y0 = F * 0.22, yL = y0 + F, Hs = yL + F * 0.14, Ws = 2 * R + 8;
+    const c = document.createElement('canvas');
+    c.width = Math.ceil(Ws * DPR); c.height = Math.ceil(Hs * DPR);
+    const x = c.getContext('2d');
+    x.scale(DPR, DPR);
+    const r = rng(9), p1 = r() * TAU, p2 = r() * TAU, p3 = r() * TAU, A = F * 0.09;
+    const topAt = (u) => y0 + A * (0.55 * Math.sin(u / 41 + p1) + 0.3 * Math.sin(u / 17 + p2) + 0.15 * Math.sin(u / 7.3 + p3));
+    const band = new Path2D(), crest = new Path2D();
+    band.moveTo(0, Hs);
+    crest.moveTo(0, topAt(0));
+    for (let u = 0; u <= Ws; u += 3) { band.lineTo(u, topAt(u)); crest.lineTo(u, topAt(u)); }
+    band.lineTo(Ws, Hs);
+    band.closePath();
+    const g = x.createLinearGradient(0, 0, 0, Hs);
+    for (const [t, col] of FOAM_STOPS) g.addColorStop(clamp((y0 + t * F) / Hs, 0, 1), col);
+    g.addColorStop(1, 'rgb(218,158,26)');
+    // the band glows a little past its own outline, so the top edge reads soft
+    x.save();
+    x.shadowColor = 'rgba(252,242,215,0.95)';
+    x.shadowBlur = 7 * DPR;
+    x.fillStyle = g;
+    x.fill(band);
+    x.restore();
+    // bubbles: fine and white up top, golden lower down, a rusty seam where it meets the beer
+    x.save();
+    x.clip(band);
+    for (const z of FOAM_BUBBLES) {
+      const n = Math.round(Ws * (z.t1 - z.t0) * F * z.density);
+      const body = new Path2D(), shine = new Path2D();
+      for (let i = 0; i < n; i++) {
+        const u = r() * Ws, y = y0 + (z.t0 + (z.t1 - z.t0) * r()) * F, rad = z.r0 + (z.r1 - z.r0) * r() * r();
+        body.moveTo(u + rad, y); body.arc(u, y, rad, 0, TAU);
+        const hx = u - rad * 0.35, hy = y - rad * 0.4, hr = rad * 0.3;
+        shine.moveTo(hx + hr, hy); shine.arc(hx, hy, hr, 0, TAU);
+      }
+      x.fillStyle = z.fill; x.fill(body);
+      x.lineWidth = 0.7; x.strokeStyle = z.rim; x.stroke(body);
+      x.fillStyle = 'rgba(255,255,255,0.7)'; x.fill(shine);
+    }
+    x.restore();
+    // a bright, soft crest
+    x.save();
+    x.shadowColor = 'rgba(255,252,240,0.9)';
+    x.shadowBlur = 6 * DPR;
+    x.strokeStyle = 'rgba(255,253,246,0.7)';
+    x.lineWidth = 2.5;
+    x.lineJoin = 'round';
+    x.stroke(crest);
+    x.restore();
+    // let the lip of beer under the head fade into the body
+    x.save();
+    x.globalCompositeOperation = 'destination-out';
+    const fade = x.createLinearGradient(0, yL + F * 0.02, 0, Hs - 2);
+    fade.addColorStop(0, 'rgba(0,0,0,0)');
+    fade.addColorStop(1, 'rgba(0,0,0,1)');
+    x.fillStyle = fade;
+    x.fillRect(0, yL, Ws, Hs - yL + 4);
+    x.restore();
+    foamGeo = { yL, Hs, Ws };
+    return c;
+  }
+
+  function resize() {
+    W = Math.max(1, window.innerWidth);
+    H = Math.max(1, window.innerHeight);
+    DPR = Math.min(dprCap, window.devicePixelRatio || 1);
+    cv.width = Math.round(W * DPR);
+    cv.height = Math.round(H * DPR);
+    DZ = Math.min(W, H) * 0.2;
+    R = Math.hypot(W, H) / 2 + 2;
+    s = Math.min(H / DH, (W / 2 - 8) / (DW / 2 - TEXT_LEFT), (W / 2 - 8) / (TEXT_RIGHT - DW / 2));
+    offX = (W - DW * s) / 2;
+    offY = (H - DH * s) / 2;
+    full = 1 - START_LINE;
+    foamRest = (BEER_LINE - BEER_FOAM_TOP) * s;
+    foamMax = foamRest * 1.35;
+    if (!seeded) { fill = full; foam = foamRest; seeded = true; }
+    drinkCv = document.createElement('canvas');
+    drinkCv.width = cv.width; drinkCv.height = cv.height;
+    dctx = drinkCv.getContext('2d');
+    foamSprite = paintFoamSprite();
+    if (ready()) {
+      paintPoster();
+      drinkSheet = paintBeer(img.birra);
+    }
+    seedMotes();
+  }
+
+  // ---- sensors ----
+  function screenTurn() {
+    const o = screen.orientation;
+    const a = o && typeof o.angle === 'number' ? o.angle : (typeof window.orientation === 'number' ? window.orientation : 0);
+    return (a * Math.PI) / 180;
+  }
+  function toScreen(x, y) {
+    const t = screenTurn(), c = Math.cos(t), si = Math.sin(t);
+    return [x * c + y * si, -x * si + y * c];
+  }
+  function onOrientation(e) {
+    if (e.beta == null || e.gamma == null) return;
+    const b = (e.beta * Math.PI) / 180, g = (e.gamma * Math.PI) / 180;
+    const v = toScreen(Math.cos(b) * Math.sin(g), Math.sin(b));
+    gT.x = v[0]; gT.y = v[1]; gT.z = Math.abs(Math.cos(b) * Math.cos(g));
+    if (!sensorSeen) { sensorSeen = true; setMode('sensor'); }
+  }
+  const slowG = { x: 0, y: 0, z: 0 };
+  function onMotion(e) {
+    let a = e.acceleration, x, y, z;
+    if (a && a.x != null) { x = a.x; y = a.y; z = a.z || 0; }
+    else {
+      a = e.accelerationIncludingGravity;
+      if (!a || a.x == null) return;
+      slowG.x += (a.x - slowG.x) * 0.08; slowG.y += (a.y - slowG.y) * 0.08; slowG.z += ((a.z || 0) - slowG.z) * 0.08;
+      x = a.x - slowG.x; y = a.y - slowG.y; z = (a.z || 0) - slowG.z;
+    }
+    motionSeen = true;
+    const v = toScreen(x, -y);
+    acc.x = clamp(v[0], -12, 12);
+    acc.y = clamp(v[1], -12, 12);
+    const now = performance.now(), mag = Math.hypot(x, y, z);
+    if (mag > 15 && (!shakes.length || now - shakes[shakes.length - 1] > 120)) shakes.push(now);
+    shakes = shakes.filter((t) => now - t < 1000);
+    if (shakes.length >= 3) {
+      shakes = [];
+      if (started && !pouring && fill < full * 0.35) pour();
+    }
+  }
+  window.addEventListener('deviceorientation', onOrientation);
+  window.addEventListener('devicemotion', onMotion);
+
+  let hintTimer = 0;
+  function showHint(text, ms) {
+    el.hint.textContent = text;
+    el.hint.classList.remove('faded');
+    clearTimeout(hintTimer);
+    hintTimer = setTimeout(() => el.hint.classList.add('faded'), ms || 5000);
+  }
+  function setMode(next, note) {
+    mode = next;
+    cv.classList.toggle('draggable', next === 'drag');
+    if (!started) return;
+    if (next === 'sensor') showHint('Inclinalo hacia tu boca para tomar');
+    else if (next === 'drag') showHint(note || 'Arrastrá la birra para arriba para tomar', 7000);
+  }
+
+  // ---- finger and keyboard ----
+  function splash(x, y) {
+    const cx = x - W / 2, cy = y - H / 2;
+    kick(cx * nY - cy * nX, -240, 40);
+    for (let k = 0; k < 10; k++) {
+      const bx = x + (Math.random() - 0.5) * 30, by = y + (Math.random() - 0.5) * 30;
+      if (inBeer(bx, by, 4)) spawnBubble(bx, by, 0.6 + Math.random() * 1.4);
+    }
+  }
+  cv.addEventListener('pointerdown', (e) => {
+    if (!started) return;
+    if (mode === 'sensor') { splash(e.clientX, e.clientY); return; }
+    try { cv.setPointerCapture(e.pointerId); } catch (err) { /* ignore */ }
+    drag = { id: e.pointerId, x: e.clientX, y: e.clientY, r0: tilt.roll, p0: tilt.pitch, moved: false };
+    cv.classList.add('dragging');
+  });
+  cv.addEventListener('pointermove', (e) => {
+    if (!drag || e.pointerId !== drag.id) return;
+    const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+    if (Math.hypot(dx, dy) > 6) drag.moved = true;
+    tilt.roll = clamp(drag.r0 + (dx / W) * 2.2, -1.75, 1.75);
+    tilt.pitch = clamp(drag.p0 - (dy / H) * 3.4, 0, 2.6);
+  });
+  function endDrag(e) {
+    if (!drag || e.pointerId !== drag.id) return;
+    if (!drag.moved) splash(e.clientX, e.clientY);
+    drag = null;
+    cv.classList.remove('dragging');
+  }
+  cv.addEventListener('pointerup', endDrag);
+  cv.addEventListener('pointercancel', endDrag);
+  const ARROWS = ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'];
+  window.addEventListener('keydown', (e) => {
+    if (!started || mode === 'sensor' || !ARROWS.includes(e.key)) return;
+    keys.add(e.key);
+    e.preventDefault();
+  });
+  window.addEventListener('keyup', (e) => keys.delete(e.key));
+  window.addEventListener('blur', () => keys.clear());
+
+  // ---- sound, synthesized on the spot ----
+  let ac = null, master = null, noiseBuf = null, pourGain = null, fizzGain = null, audioClock = 0;
+  let soundOn = load('birra.sonido') !== 'no';
+  function loopNoise(type, freq, q) {
+    const src = ac.createBufferSource();
+    src.buffer = noiseBuf; src.loop = true;
+    const f = ac.createBiquadFilter();
+    f.type = type; f.frequency.value = freq; f.Q.value = q;
+    const g = ac.createGain();
+    g.gain.value = 0;
+    src.connect(f); f.connect(g); g.connect(master);
+    src.start();
+    return g;
+  }
+  function startAudio() {
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return;
+    if (ac) { if (ac.state === 'suspended') ac.resume().catch(() => {}); return; }
+    try {
+      ac = new AC();
+      master = ac.createGain();
+      master.gain.value = soundOn ? 0.85 : 0;
+      master.connect(ac.destination);
+      noiseBuf = ac.createBuffer(1, ac.sampleRate * 2, ac.sampleRate);
+      const d = noiseBuf.getChannelData(0);
+      for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+      pourGain = loopNoise('bandpass', 650, 0.9);
+      fizzGain = loopNoise('highpass', 5200, 0.7);
+    } catch (e) { ac = null; }
+  }
+  function audioTick(dt) {
+    if (!ac || !pourGain) return;
+    audioClock -= dt;
+    if (audioClock > 0) return;
+    audioClock = 0.1;
+    const t = ac.currentTime;
+    pourGain.gain.setTargetAtTime(stream * (0.2 + Math.random() * 0.12), t, 0.06);
+    fizzGain.gain.setTargetAtTime(fill > 0 ? 0.006 + fizz * 0.05 : 0, t, 0.3);
+  }
+  function gulp(strength) {
+    if (!ac || !soundOn) return;
+    const t = ac.currentTime;
+    const o = ac.createOscillator(), g = ac.createGain();
+    o.type = 'sine';
+    o.frequency.setValueAtTime(210, t);
+    o.frequency.exponentialRampToValueAtTime(70, t + 0.16);
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(0.5 * strength, t + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.2);
+    o.connect(g); g.connect(master);
+    o.start(t); o.stop(t + 0.22);
+    const n = ac.createBufferSource(), f = ac.createBiquadFilter(), ng = ac.createGain();
+    n.buffer = noiseBuf;
+    f.type = 'lowpass'; f.frequency.value = 900;
+    ng.gain.setValueAtTime(0.0001, t);
+    ng.gain.exponentialRampToValueAtTime(0.25 * strength, t + 0.01);
+    ng.gain.exponentialRampToValueAtTime(0.0001, t + 0.09);
+    n.connect(f); f.connect(ng); ng.connect(master);
+    n.start(t, Math.random()); n.stop(t + 0.1);
+  }
+  function burp() {
+    if (!ac || !soundOn) return;
+    const t = ac.currentTime + 0.35;
+    const o = ac.createOscillator(), lfo = ac.createOscillator(), lfoGain = ac.createGain();
+    const f = ac.createBiquadFilter(), g = ac.createGain();
+    o.type = 'sawtooth';
+    o.frequency.setValueAtTime(96, t);
+    o.frequency.linearRampToValueAtTime(68, t + 0.7);
+    lfo.frequency.value = 23; lfoGain.gain.value = 16;
+    lfo.connect(lfoGain); lfoGain.connect(o.frequency);
+    f.type = 'lowpass'; f.frequency.value = 520; f.Q.value = 4;
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(0.45, t + 0.05);
+    g.gain.exponentialRampToValueAtTime(0.3, t + 0.45);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.8);
+    o.connect(f); f.connect(g); g.connect(master);
+    o.start(t); lfo.start(t); o.stop(t + 0.85); lfo.stop(t + 0.85);
+  }
+  function paintSoundButton() {
+    el.sound.setAttribute('aria-pressed', String(soundOn));
+    el.sound.setAttribute('aria-label', soundOn ? 'Silenciar' : 'Activar sonido');
+    el.soundOn.hidden = !soundOn;
+    el.soundOff.hidden = soundOn;
+  }
+  el.sound.addEventListener('click', () => {
+    soundOn = !soundOn;
+    save('birra.sonido', soundOn ? 'si' : 'no');
+    startAudio();
+    if (master) master.gain.setTargetAtTime(soundOn ? 0.85 : 0, ac.currentTime, 0.05);
+    paintSoundButton();
+  });
+
+  // ---- keep the screen on while drinking ----
+  async function keepAwake() {
+    try { if (navigator.wakeLock) await navigator.wakeLock.request('screen'); } catch (e) { /* not allowed here */ }
+  }
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible' && started) keepAwake();
+  });
+
+  // ---- rounds ----
+  function pour() {
+    if (pouring || fill >= full * 0.98) return;
+    if (fill < 0.002) { fill = 0; foam = 0; drunkMl = 0; }
+    pouring = true;
+    emptyShown = false;
+    el.salud.hidden = true;
+    fizz = 1;
+    startAudio();
+  }
+  el.pour.addEventListener('click', pour);
+  el.again.addEventListener('click', pour);
+
+  el.go.addEventListener('click', () => {
+    const asks = [];
+    try {
+      if (window.DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission === 'function') asks.push(DeviceOrientationEvent.requestPermission());
+    } catch (e) { asks.push(Promise.reject(e)); }
+    try {
+      if (window.DeviceMotionEvent && typeof DeviceMotionEvent.requestPermission === 'function') asks.push(DeviceMotionEvent.requestPermission());
+    } catch (e) { asks.push(Promise.reject(e)); }
+    startAudio();
+    keepAwake();
+    started = true;
+    el.start.hidden = true;
+    if (sensorSeen) setMode('sensor');
+    Promise.allSettled(asks).then((res) => {
+      const refused = res.some((r) => r.status === 'rejected' || r.value !== 'granted');
+      setTimeout(() => {
+        if (sensorSeen) setMode('sensor');
+        else setMode('drag', refused ? 'Sin permiso para el movimiento: arrastrá la birra para arriba para tomar' : null);
+      }, 1200);
+    });
+  });
+
+  function finishPint() {
+    fill = 0;
+    foam = 0;
+    emptyShown = true;
+    el.salud.hidden = false;
+    if (drunkMl > 150) burp();
+  }
+
+  // ---- bubbles in the beer, and faint motes drifting over the poster ----
+  const bubbles = [];
+  const sites = [0.17, 0.36, 0.53, 0.69, 0.85].map((f) => ({ f, t: Math.random() }));
+  function spawnBubble(x, y, r) {
+    if (bubbles.length < 160) bubbles.push({ x, y, r, ph: Math.random() * TAU, v: 0 });
+  }
+  function updateBubbles(dt) {
+    if (fill > 0.004) {
+      for (const st of sites) {
+        st.t -= dt * (4 + 2 * Math.sin(time * 0.6 + st.f * 11));
+        if (st.t <= 0) {
+          st.t += 1;
+          const x = st.f * W + (Math.random() - 0.5) * 2, y = H - 2;
+          if (inBeer(x, y, 4)) spawnBubble(x, y, 0.6 + Math.random() * 0.8);
+        }
+      }
+      let want = dt * (pouring ? 120 : 10);
+      while (want > 0) {
+        if (Math.random() < want) {
+          for (let k = 0; k < 4; k++) {
+            const x = Math.random() * W, y = Math.random() * H;
+            if (inBeer(x, y, 8)) { spawnBubble(x, y, 0.5 + Math.random() * 1.4); break; }
+          }
+        }
+        want -= 1;
+      }
+    }
+    const up = 0.25 + 0.75 * m;
+    for (let i = bubbles.length - 1; i >= 0; i--) {
+      const b = bubbles[i];
+      b.v = Math.min(b.v + dt * 60, 30 + b.r * 30);
+      const sp = b.v * up * dt, wob = Math.sin(b.ph + time * 5.5) * 6 * dt;
+      b.x += -nX * sp + nY * wob;
+      b.y += -nY * sp - nX * wob;
+      b.r = Math.min(b.r + dt * 0.12, 2.4);
+      const cx = b.x - W / 2, cy = b.y - H / 2;
+      const lx = cx * nY - cy * nX, ly = cx * nX + cy * nY;
+      if (fill <= 0 || ly < yS - waveAt(lx) + b.r || b.x < -8 || b.x > W + 8 || b.y < -8 || b.y > H + 8) {
+        bubbles[i] = bubbles[bubbles.length - 1];
+        bubbles.pop();
+      }
+    }
+  }
+  const motes = [];
+  function seedMotes() {
+    const n = Math.round(clamp((W * H) / 7000, 24, 70));
+    motes.length = 0;
+    for (let i = 0; i < n; i++) {
+      motes.push({
+        x: Math.random() * W, y: Math.random() * H, r: 0.8 + Math.random() * 2.2,
+        a: 0.05 + Math.random() * 0.16, v: 6 + Math.random() * 12, ph: Math.random() * TAU,
+      });
+    }
+  }
+  function updateMotes(dt) {
+    for (const p of motes) {
+      p.y -= p.v * dt;
+      p.x += Math.sin(time * 0.5 + p.ph) * 7 * dt;
+      if (p.y < -8) { p.y = H + 8; p.x = Math.random() * W; }
+    }
+  }
+
+  // ---- simulation step ----
+  function update(dt) {
+    time += dt;
+
+    if (mode !== 'sensor') {
+      if (keys.has('ArrowLeft')) tilt.roll = Math.max(-1.75, tilt.roll - dt * 1.8);
+      if (keys.has('ArrowRight')) tilt.roll = Math.min(1.75, tilt.roll + dt * 1.8);
+      if (keys.has('ArrowUp')) tilt.pitch = Math.min(2.6, tilt.pitch + dt * 1.6);
+      if (keys.has('ArrowDown')) tilt.pitch = Math.max(0, tilt.pitch - dt * 1.6);
+      if (!drag && !keys.size) {
+        const k = 1 - Math.exp(-dt * 2.4);
+        tilt.roll -= tilt.roll * k;
+        tilt.pitch -= tilt.pitch * k;
+      }
+      let roll = tilt.roll;
+      if (!started && !reduceMotion) roll += 0.06 * Math.sin(time * 0.9);
+      const cp = Math.cos(tilt.pitch);
+      gT.x = Math.sin(roll) * cp;
+      gT.y = Math.cos(roll) * cp;
+      gT.z = Math.abs(Math.sin(tilt.pitch));
+    }
+
+    // the beer chases gravity (plus the shove of a shake) on a soft spring: that lag is the slosh
+    const decay = Math.exp(-dt * 6);
+    acc.x *= decay; acc.y *= decay;
+    let tx = gT.x * 9.81 - acc.x, ty = gT.y * 9.81 - acc.y, tz = gT.z * 9.81;
+    const tl = Math.hypot(tx, ty, tz) || 1;
+    tx /= tl; ty /= tl; tz /= tl;
+    const w0 = 2 * Math.PI * 1.2, K = w0 * w0, C = 2 * 0.26 * w0, h = dt / 2;
+    for (let k = 0; k < 2; k++) {
+      gV.x += (K * (tx - gE.x) - C * gV.x) * h;
+      gV.y += (K * (ty - gE.y) - C * gV.y) * h;
+      gV.z += (K * (tz - gE.z) - C * gV.z) * h;
+      gE.x += gV.x * h; gE.y += gV.y * h; gE.z += gV.z * h;
+    }
+    const gl = Math.hypot(gE.x, gE.y, gE.z);
+    if (gl > 0.05) { gx = gE.x / gl; gy = gE.y / gl; gz = Math.abs(gE.z) / gl; }
+    m = Math.hypot(gx, gy);
+    if (m > 0.015) { nX = gx / m; nY = gy / m; }
+
+    // pour, settle
+    if (pouring) {
+      fill = Math.min(full, fill + (full / POUR_SECONDS) * dt);
+      foam = Math.min(foamMax * 1.15, foam + ((foamMax * 1.4) / POUR_SECONDS) * dt);
+      stream = Math.min(1, stream + dt * 5);
+      fizz = 1;
+      if (fill >= full) pouring = false;
+    } else {
+      stream = Math.max(0, stream - dt * 3.5);
+      fizz = Math.max(0, fizz - dt / 5);
+      if (foam > foamRest) foam += (foamRest - foam) * (1 - Math.exp(-dt / 10));
+      foam = Math.min(foam, foamMax * Math.sqrt(Math.max(0, fill) / full));
+    }
+
+    level = solveLevel(fill);
+    const off = level - gz * DZ;
+    sLine = m > 1e-4 ? clamp(off / m, -1e5, 1e5) : (off > 0 ? 1e5 : -1e5);
+    yS = sLine - (nX * W) / 2 - (nY * H) / 2;
+
+    // drink: beer that reaches the glass mouth (the top edge) pours out
+    drinkRate = 0;
+    if (started && !pouring && fill > 0) {
+      const mouth = Math.max(0, gx * W) + gz * DZ - level;
+      if (mouth + foam > 0 && foam > 0) foam = Math.max(0, foam - (5 + (mouth + foam) * 0.7) * dt);
+      if (mouth > 0) {
+        drinkRate = Math.min(0.3, 2.2 * Math.pow(mouth / H, 1.25));
+        const d = Math.min(fill, drinkRate * dt);
+        fill -= d;
+        drunkMl += (d / full) * PINT_ML;
+      }
+    }
+    // a thin collar of foam stays on whatever beer is left
+    if (fill > 0.002) foam = Math.max(foam, foamRest * 0.22 * Math.min(1, fill / 0.12));
+    gulpTimer -= dt;
+    if (drinkRate > 0.02 && gulpTimer <= 0) {
+      gulp(Math.min(1, 0.45 + drinkRate * 2.5));
+      gulpTimer = Math.max(0.26, 0.5 - drinkRate);
+    }
+    if (started && !pouring && !emptyShown && fill <= 0.0015) finishPint();
+
+    // waves: turning the glass, pouring, and a little life at rest
+    const ang = Math.atan2(-nX, nY);
+    let da = ang - prevAng;
+    if (da > Math.PI) da -= TAU;
+    if (da < -Math.PI) da += TAU;
+    prevAng = ang;
+    const om = clamp(da / Math.max(dt, 1e-3), -8, 8) * (reduceMotion ? 0.3 : 1);
+    if (Math.abs(om) > 0.05) for (let i = 0; i < WN; i++) wv[i] += om * (nodeX(i) / R) * 150 * dt;
+    if (!reduceMotion && Math.random() < dt * 1.2) kick((Math.random() * 2 - 1) * R * 0.8, (Math.random() - 0.5) * 26, 30);
+    if (stream > 0.1) kick((Math.random() - 0.5) * 12, -(40 + Math.random() * 60) * stream, 18);
+    stepWaves(dt);
+    const amp = reduceMotion ? 0.5 : 1;
+    for (let i = 0; i < WN; i++) { sx[i] = nodeX(i); sy[i] = yS - wh[i] * amp; }
+    foamT = fill > 0.0005 && yS < R ? Math.min(foam / Math.max(m, 0.45), H * 0.3) : 0;
+    updateBubbles(dt);
+    if (!reduceMotion) updateMotes(dt);
+    audioTick(dt);
+  }
+
+  // ---- drawing ----
+  function setLocal(c) {
+    c.setTransform(DPR, 0, 0, DPR, 0, 0);
+    c.translate(W / 2, H / 2);
+    c.rotate(Math.atan2(-nX, nY));
+  }
+  function curve(p, xs, ys, from, to) {
+    const step = to > from ? 1 : -1;
+    for (let i = from; i !== to; i += step) {
+      const j = i + step;
+      p.quadraticCurveTo(xs[i], ys[i], (xs[i] + xs[j]) / 2, (ys[i] + ys[j]) / 2);
+    }
+    p.lineTo(xs[to], ys[to]);
+  }
+  function drawBubbles(c) {
+    if (!bubbles.length) return;
+    c.beginPath();
+    for (const b of bubbles) { c.moveTo(b.x + b.r, b.y); c.arc(b.x, b.y, b.r, 0, TAU); }
+    c.fillStyle = 'rgba(255,236,180,0.16)';
+    c.fill();
+    c.lineWidth = 0.8;
+    c.strokeStyle = 'rgba(255,246,215,0.45)';
+    c.stroke();
+  }
+  function drawMotes() {
+    if (!motes.length) return;
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    for (const p of motes) {
+      const tw = 0.7 + 0.3 * Math.sin(time * 1.3 + p.ph);
+      ctx.globalAlpha = p.a * tw * 0.35;
+      ctx.fillStyle = '#fff6e0';
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.r * 3, 0, TAU); ctx.fill();
+      ctx.globalAlpha = p.a * tw;
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, TAU); ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+  }
+  // the head rides the slosh as one raft: it follows the surface's overall height and tilt, and squashes as you drink
+  function drawFoam(c, k, lift, slope) {
+    const { yL, Hs, Ws } = foamGeo;
+    setLocal(c);
+    c.translate(0, yS - lift);
+    c.rotate(Math.atan(-slope));
+    c.drawImage(foamSprite, -Ws / 2, -yL * k, Ws, Hs * k);
+  }
+  function drawStream(c, endY) {
+    if (stream < 0.02) return;
+    setLocal(c);
+    const w = Math.max(7, W * 0.045) * stream, y0 = -R - 4, y1 = Math.min(endY + 6, R);
+    const steps = 16, left = [], right = [];
+    for (let k = 0; k <= steps; k++) {
+      const t = k / steps, y = y0 + (y1 - y0) * t;
+      const wob = Math.sin(time * 17 + t * 9) * 1.6 * stream, half = w * (0.6 - 0.22 * t);
+      left.push([wob - half, y]);
+      right.push([wob + half, y]);
+    }
+    const p = new Path2D();
+    p.moveTo(left[0][0], left[0][1]);
+    for (const q of left) p.lineTo(q[0], q[1]);
+    for (let k = right.length - 1; k >= 0; k--) p.lineTo(right[k][0], right[k][1]);
+    p.closePath();
+    const g = c.createLinearGradient(-w, 0, w, 0);
+    g.addColorStop(0, 'rgba(200,104,12,0.92)');
+    g.addColorStop(0.45, 'rgba(255,196,96,0.96)');
+    g.addColorStop(0.6, 'rgba(250,170,60,0.96)');
+    g.addColorStop(1, 'rgba(192,96,10,0.92)');
+    c.fillStyle = g;
+    c.fill(p);
+  }
+  function draw() {
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.globalAlpha = 1;
+    ctx.clearRect(0, 0, cv.width, cv.height);
+    if (!ready() || !drinkSheet) return;
+    // the poster and lettering live on the canvases underneath; this one holds the motes and the pint
+    if (!reduceMotion) drawMotes();
+    // the pint is painted on its own layer, then laid over everything, lettering included, at 95%
+    const c = dctx;
+    c.setTransform(1, 0, 0, 1, 0, 0);
+    c.clearRect(0, 0, drinkCv.width, drinkCv.height);
+    let streamEnd = R;
+    if (fill > 0.0005 && yS < R) {
+      const k = foamT / foamRest, headed = k >= 0.06 && foamSprite;
+      const beer = new Path2D();
+      let lift = 0, slope = 0;
+      if (headed) {
+        // under a head the line is straight: its height and tilt are the waves' average
+        let sxx = 0, sxy = 0;
+        for (let i = 0; i < WN; i++) { const xi = nodeX(i); lift += wh[i]; sxx += xi * xi; sxy += xi * wh[i]; }
+        lift /= WN;
+        slope = sxy / sxx;
+        const yAt = (lx) => yS - lift - slope * lx;
+        beer.moveTo(-R - 4, yAt(-R - 4));
+        beer.lineTo(R + 4, yAt(R + 4));
+      } else {
+        beer.moveTo(sx[0], sy[0]);
+        curve(beer, sx, sy, 0, WN - 1);
+      }
+      beer.lineTo(R + 4, R + 4);
+      beer.lineTo(-R - 4, R + 4);
+      beer.closePath();
+      c.save();
+      setLocal(c);
+      c.clip(beer);
+      c.setTransform(1, 0, 0, 1, 0, 0);
+      c.drawImage(drinkSheet, 0, 0);
+      c.setTransform(DPR, 0, 0, DPR, 0, 0);
+      drawBubbles(c);
+      c.restore();
+      if (headed) drawFoam(c, k, lift, slope);
+      streamEnd = yS - foamT;
+    }
+    drawStream(c, streamEnd);
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.globalAlpha = DRINK_OPACITY;
+    ctx.drawImage(drinkCv, 0, 0);
+    ctx.globalAlpha = 1;
+  }
+
+  function updateControls() {
+    const pourable = !pouring && fill < full * 0.98;
+    if (el.pour.disabled === pourable) el.pour.disabled = !pourable;
+  }
+
+  // ---- loop, with a lighter canvas if the phone struggles ----
+  let last = performance.now(), slow = 0;
+  function frame(now) {
+    const raw = (now - last) / 1000;
+    last = now;
+    const dt = Math.min(0.05, Math.max(0, raw));
+    if (raw < 0.25) {
+      // only a phone that can't keep 22 fps for several seconds gets a softer canvas; 30 fps battery saving is fine
+      slow = raw > 1 / 22 ? slow + raw : Math.max(0, slow - raw * 0.5);
+      if (slow > 3 && dprCap > 1.5 && (window.devicePixelRatio || 1) > 1.5) { dprCap = 1.5; slow = 0; resize(); }
+    }
+    update(dt);
+    draw();
+    updateControls();
+    requestAnimationFrame(frame);
+  }
+
+  window.addEventListener('resize', resize);
+  window.addEventListener('orientationchange', () => setTimeout(resize, 120));
+
+  resize();
+  paintSoundButton();
+  for (let i = 0; i < 60; i++) update(1 / 60);
+  draw();
+  updateControls();
+  requestAnimationFrame((t) => { last = t; requestAnimationFrame(frame); });
+})();
+</script>
+</body>
+</html>
